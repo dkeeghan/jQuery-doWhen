@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>jQuery-doWhen Demo</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="stylesheet" href="assets/css/normalize.css">
+		<link rel="stylesheet" href="assets/css/demo.css">
+	</head>
+	<body>
+		<!--[if lt IE 8]>
+			<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
+
+		<h1>jQuery-doWhen Demo</h1>
+
+		<h2>What is it?</h2>
+		<p><strong>doWhen</strong> is a conditional checker that will do a number of tasks (like show, hide, click, disable) based on the values of forms that appear on the page.</p>
+
+		<h2>Usage</h2>
+
+		<p>All the logic appears on the element where the logic will be applied to. For example <code>show</code> and <code>hide</code> expect any kind of element (like a DIV or SPAN), <code>click</code> expects a clickable element (like A, INPUT or BUTTON, however could be anything), and <code>disable</code> expects a form element that can be disabled (like a SELECT, OPTION or INPUT).</p>
+
+		<p>There are two key attributes required:</p>
+
+		<ul>
+			<li><code>data-do-when</code>: A JSON string containing the ID/name attributes of form elements on the page and an array of the values that are required to run the do condition.</li>
+			<li><code>data-do-action</code>: The type. Valid options: <code>show</code>, <code>hide</code>, <code>disable</code></li>
+		</ul>
+
+		<h2>Examples</h2>
+
+		<h3>One-to-one mappings</h3>
+
+		<h4>Simple <code>show</code></h4>
+
+		<p>Content A will appear when Option A is selected, Content B will appear when Option B is selected.</p>
+
+		<label for="sel-1">Selectbox 1</label>
+		<select id="sel-1">
+			<option value="" selected="selected">Select One</option>
+			<option value="a">Option A</option>
+			<option value="b">Option B</option>
+		</select>
+
+		<div data-do-when='{ "sel-1": ["a"] }' data-do-action="show">
+			Content A
+		</div>
+
+		<div data-do-when='{ "sel-1": ["b"] }' data-do-action="show">
+			Content B
+		</div>
+
+		<h4>Simple <code>hide</code></h4>
+
+		<p>Content E will hide when Option E is selected.</p>
+
+		<label for="sel-3">Selectbox 3</label>
+		<select id="sel-3">
+			<option value="" selected="selected">Select One</option>
+			<option value="e">Option E</option>
+		</select>
+
+		<div data-do-when='{ "sel-3": ["e"] }' data-do-action="hide">
+			Content E
+		</div>
+
+		<h4>Simple <code>click</code></h4>
+
+		<p>Button F will be clicked when Option F is selected.</p>
+
+		<label for="sel-4">Selectbox 4</label>
+		<select id="sel-4">
+			<option value="" selected="selected">Select One</option>
+			<option value="f">Option F</option>
+		</select>
+
+		<button data-do-when='{ "sel-4": ["f"] }' data-do-action="click" onclick="window.alert('Button F was clicked.');">Button F</button>
+
+		<h4>Simple <code>disable</code></h4>
+
+		<p>Button G will be disabled when Option G is selected.</p>
+
+		<label for="sel-5">Selectbox 5</label>
+		<select id="sel-5">
+			<option value="" selected="selected">Select One</option>
+			<option value="g">Option G</option>
+		</select>
+
+		<button data-do-when='{ "sel-5": ["g"] }' data-do-action="disable" onclick="window.alert('Button G was clicked.');">Button G</button>
+
+		<h3>Multiple value mappings</h3>
+
+		<p>You can also look for multiple possible options like in the examples below.</p>
+
+		<h4>Multiple <code>show</code></h4>
+
+		<p>Content C will appear when Option C or Option D is selected, Content D will appear when Option D is selected.</p>
+
+		<label for="sel-2">Selectbox 2</label>
+		<select id="sel-2">
+			<option value="" selected="selected">Select One</option>
+			<option value="c">Option C</option>
+			<option value="d">Option D</option>
+		</select>
+
+		<div data-do-when='{ "sel-2": ["c", "d"] }' data-do-action="show">
+			Content C
+		</div>
+
+		<div data-do-when='{ "sel-2": ["d"] }' data-do-action="show">
+			Content D
+		</div>
+
+
+
+
+
+
+		<h2>Dependencies</h2>
+
+		<ul>
+			<li>jQuery 1.9+</li>
+		</ul>
+
+		<h2>Supported Browsers</h2>
+
+		<ul>
+			<li>Internet Explore 8, 9, 10, 11</li>
+			<li>Latest Chrome</li>
+			<li>Latest Firefox</li>
+			<li>Latest Safari</li>
+		</ul>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="assets/js/jquery-1.11.3.min.js"><\/script>')</script>
+		<script src="../jquery.dowhen.js"></script>
+
+		<script>
+			$(document).ready(function(){
+				$('body').doWhen();
+			});
+		</script>
+	</body>
+</html>
