@@ -74,11 +74,11 @@ A series of events are fired on update of the elements so you can listen for cha
 ### `updated.doWhen`
 Triggered from the element on update (match or unmatch)
 
-### `matched.[name].doWhen`
-Triggered from the action `[name]` on match. E.g. the `show` event will trigger the event `matched.show.doWhen`.
+### `matched.[action].doWhen`
+Triggered from the action `[action]` on match. E.g. the `show` event will trigger the event `matched.show.doWhen`.
 
-### `unmatched.[name].doWhen`
-Triggered from the action `[name]` on match. E.g. the `show` event will trigger the event `unmatched.show.doWhen`.
+### `unmatched.[action].doWhen`
+Triggered from the action `[action]` on match. E.g. the `show` event will trigger the event `unmatched.show.doWhen`.
 
 
 ## LICENSE (BSD-3-Clause)
