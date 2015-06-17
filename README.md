@@ -14,8 +14,9 @@ At it's simplest just grab `jquery.dowhen.js` include it in your site and run `$
 </script>
 ```
 In the HTML, you'll need two `data-` attributes:
-* **`data-do-when`**<br/>The conditions to be used to determine when to call the action (in JSON).
-* **`data-do-action`**<br/>The action to be called.
+**`data-do-when`**<br/>The conditions to be used to determine when to call the action (in JSON).
+
+**`data-do-action`**<br/>The action to be called.
 
 The following example will `show` the `<div>` when the `<select>` element with the ID `select-box` has the option selected with the value of `yes`.
 ```html
