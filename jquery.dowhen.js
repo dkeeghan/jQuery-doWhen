@@ -55,23 +55,60 @@
 
 	_parseAndSaveData = function(el) {
 		var $el = $(el),
-			parsed = $el.data(_options.doWhenAttr),
+			when = $el.attr('data-' + _options.doWhenAttr),
 			action = $el.data(_options.doActionAttr),
-			actions = _getActionByName(action);
+			actions = _getActionByName(action),
+			parsed = [],
+			jsonObject = false,
+			convertToJSON;
 
-		for (var key in parsed) {
-			if (parsed.hasOwnProperty(key)) {
-				// if the data is an empty array it means we can ignore it
-				if (parsed[key].length === 0) {
-					delete parsed[key];
-				} else {
-					// store all the form fields that impact show/hide functionality
-					if (!_fields.hasOwnProperty(key)) {
-						_fields[key] = [];
+		convertToJSON = function(str) {
+			var json = false;
+
+			try {
+				json = $.parseJSON(str);
+			} catch (e) {
+				return false;
+			}
+
+			return json;
+		};
+
+		if (when.indexOf('||')) {
+			var arrWhen = when.split('||');
+			
+			for (var i = 0, len = arrWhen.length; i < len; i += 1) {
+				jsonObject = convertToJSON(arrWhen[i]);
+				
+				if (jsonObject !== false) {
+					parsed.push(jsonObject);
+				}
+			}
+		} else {
+			jsonObject = convertToJSON(when);
+
+			if (jsonObject !== false) {
+				parsed.push(jsonObject);
+			}
+		}
+
+		for (var j = 0, parsedLen = parsed.length; j < parsedLen; j += 1) {
+			for (var key in parsed[j]) {
+				var parsedItem = parsed[j];
+
+				if (parsedItem.hasOwnProperty(key)) {
+					// if the data is an empty array it means we can ignore it
+					if (parsedItem[key].length === 0) {
+						delete parsedItem[key];
+					} else {
+						// store all the form fields that impact conditional functionality
+						if (!_fields.hasOwnProperty(key)) {
+							_fields[key] = [];
+						}
+
+						// store all the elements related to the specific form field
+						_fields[key].push(el);
 					}
-
-					// store all the elements related to the specific form field
-					_fields[key].push(el);
 				}
 			}
 		}
@@ -142,12 +179,22 @@
 
 		$items.each(function(i, el) {
 			var $el = $(el),
-				data = $el.data(_options.doWhenAttr + '-parsed'),
-				toDo = true;
+				conditions = $el.data(_options.doWhenAttr + '-parsed'),
+				toDo = false;
 
-			for (var key in data) {
-				if (data.hasOwnProperty(key) && toDo) {
-					toDo = _doesFieldMatch(key, data[key]);
+			for (var j = 0, len = conditions.length; j < len; j += 1) {
+				var condition = conditions[j],
+					conditionMet = true;
+
+				for (var key in condition) {
+
+					if (condition.hasOwnProperty(key) && conditionMet) {
+						conditionMet = _doesFieldMatch(key, condition[key]);
+					}
+				}
+
+				if (conditionMet) {
+					toDo = true;
 				}
 			}
 
