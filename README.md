@@ -14,6 +14,7 @@ At it's simplest just grab `jquery.dowhen.js` include it in your site and run `$
 </script>
 ```
 In the HTML, you'll need two `data-` attributes:
+
 **`data-do-when`**<br/>The conditions to be used to determine when to call the action (in JSON).
 
 **`data-do-action`**<br/>The action to be called.
