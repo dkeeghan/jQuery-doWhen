@@ -1,0 +1,48 @@
+html {
+	padding: 0;
+}
+
+.page-header {
+	height: 100vh;
+	background-color: #57afe1;
+}
+ 
+	.page-header .title-container {
+		display: table;
+		width: 100%;
+		height: 100%;
+	}
+
+	.page-header .title {
+		display: table-cell;
+		vertical-align: middle;
+		width: 100%;
+	}
+
+	.page-header .title-border {
+		width: 490px;
+		border: 10px solid #fff;
+		position: relative;
+		margin: 0 auto;
+		padding: 20px 0;
+	}
+
+	.page-header h1 {
+		margin: 0;
+		text-align: center;
+		font-size: 72px;
+		font-family: "proxima-nova", sans-serif;
+		text-transform: uppercase;
+		color: #fff;
+		font-weight: 900;
+	}
+
+	.page-header strong {
+		position: absolute;
+		bottom: -40px;
+		right: -10px;
+		font-family: "proxima-nova", sans-serif;
+		font-size: 14px;
+		font-weight: 400;
+		color: #fff;
+	}

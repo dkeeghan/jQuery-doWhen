@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>Do When - jQuery Plugin</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="stylesheet" href="assets/css/normalize.css">
+		<link rel="stylesheet" href="assets/css/demo.css">
+
+		<script>
+			(function(d) {
+				var config = {
+					kitId: 'hvw2wwn',
+					scriptTimeout: 3000
+				},
+				h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='//use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+			})(document);
+		</script>
+	</head>
+	<body>
+		<header class="page-header">
+			<div class="title-container">
+				<div class="title">
+					<div class="title-border">
+						<h1>Do When</h1>
+						<strong>a jQuery Plugin</strong>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<section>
+			<p>jQuery-doWhen is a jQuery plugin to handle customisable actions (like show, hide, disable, click) based on changing form field values.</p>
+
+			<p>Documentation for options and usage can be found on the <a href="https://github.com/dkeeghan/jQuery-doWhen" target="_blank">jQuery-doWhen GitHub Page</a></p>
+
+			<h2>Examples</h2>
+
+			<h3>One-to-one mappings</h3>
+
+			<h4>Simple <code>show</code></h4>
+
+			<p>Content A will appear when Option A is selected, Content B will appear when Option B is selected.</p>
+
+	<pre><code class="html">&lt;label for=&quot;sel-1&quot;&gt;Selectbox 1&lt;/label&gt;
+	&lt;select id=&quot;sel-1&quot;&gt;
+		&lt;option value=&quot;&quot; selected=&quot;selected&quot;&gt;Select One&lt;/option&gt;
+		&lt;option value=&quot;a&quot;&gt;Option A&lt;/option&gt;
+		&lt;option value=&quot;b&quot;&gt;Option B&lt;/option&gt;
+	&lt;/select&gt;
+
+	&lt;div data-do-when=&#039;{ &quot;sel-1&quot;: [&quot;a&quot;] }&#039; data-do-action=&quot;show&quot;&gt;
+		Content A
+	&lt;/div&gt;
+
+	&lt;div data-do-when=&#039;{ &quot;sel-1&quot;: [&quot;b&quot;] }&#039; data-do-action=&quot;show&quot;&gt;
+		Content B
+	&lt;/div&gt;</code></pre>
+
+			<label for="sel-1">Selectbox 1</label>
+			<select id="sel-1">
+				<option value="" selected="selected">Select One</option>
+				<option value="a">Option A</option>
+				<option value="b">Option B</option>
+			</select>
+
+			<div data-do-when='{ "sel-1": ["a"] }' data-do-action="show">
+				Content A
+			</div>
+
+			<div data-do-when='{ "sel-1": ["b"] }' data-do-action="show">
+				Content B
+			</div>
+
+			<h4>Simple <code>hide</code></h4>
+
+			<p>Content E will hide when Option E is selected.</p>
+
+			<label for="sel-3">Selectbox 3</label>
+			<select id="sel-3">
+				<option value="" selected="selected">Select One</option>
+				<option value="e">Option E</option>
+			</select>
+
+			<div data-do-when='{ "sel-3": ["e"] }' data-do-action="hide">
+				Content E
+			</div>
+
+			<h4>Simple <code>click</code></h4>
+
+			<p>Button F will be clicked when Option F is selected.</p>
+
+			<label for="sel-4">Selectbox 4</label>
+			<select id="sel-4">
+				<option value="" selected="selected">Select One</option>
+				<option value="f">Option F</option>
+			</select>
+
+			<button data-do-when='{ "sel-4": ["f"] }' data-do-action="click" onclick="window.alert('Button F was clicked.');">Button F</button>
+
+			<h4>Simple <code>disable</code></h4>
+
+			<p>Button G will be disabled when Option G is selected.</p>
+
+			<label for="sel-5">Selectbox 5</label>
+			<select id="sel-5">
+				<option value="" selected="selected">Select One</option>
+				<option value="g">Option G</option>
+			</select>
+
+			<button data-do-when='{ "sel-5": ["g"] }' data-do-action="disable" onclick="window.alert('Button G was clicked.');">Button G</button>
+
+			<h3>Multiple value mappings</h3>
+
+			<p>You can also look for multiple possible options like in the examples below.</p>
+
+			<h4>Multiple <code>show</code></h4>
+
+			<p>Content C will appear when Option C or Option D is selected, Content D will appear when Option D is selected.</p>
+
+			<label for="sel-2">Selectbox 2</label>
+			<select id="sel-2">
+				<option value="" selected="selected">Select One</option>
+				<option value="c">Option C</option>
+				<option value="d">Option D</option>
+			</select>
+
+			<div data-do-when='{ "sel-2": ["c", "d"] }' data-do-action="show">
+				Content C
+			</div>
+
+			<div data-do-when='{ "sel-2": ["d"] }' data-do-action="show">
+				Content D
+			</div>
+
+			<h3>Condition 1 AND Condition 2</h3>
+
+			<p>Content V1/W1 will appear if either Option V1 inside Selectbox V AND Option W1 inside Selectbox W is selected.</p>
+
+			<label for="sel-v">Selectbox V</label>
+			<select id="sel-v">
+				<option value="" selected="selected">Select One</option>
+				<option value="v1">Option V1</option>
+				<option value="v2">Option V2</option>
+			</select>
+
+			<label for="sel-w">Selectbox W</label>
+			<select id="sel-w">
+				<option value="" selected="selected">Select One</option>
+				<option value="w1">Option W1</option>
+				<option value="w2">Option W2</option>
+			</select>
+
+			<div data-do-when='{ "sel-v": ["v1"], "sel-w": ["w1"] }' data-do-action="show">
+				Content V1/W1
+			</div>
+
+			<h3>Condition 1 OR Condition 2</h3>
+
+			<p>Content X1/Y1 will appear if either Option X1 inside Selectbox X OR Option Y1 inside Selectbox Y is selected.</p>
+
+			<label for="sel-x">Selectbox X</label>
+			<select id="sel-x">
+				<option value="" selected="selected">Select One</option>
+				<option value="x1">Option X1</option>
+				<option value="x2">Option X2</option>
+			</select>
+
+			<label for="sel-y">Selectbox Y</label>
+			<select id="sel-y">
+				<option value="" selected="selected">Select One</option>
+				<option value="y1">Option Y1</option>
+				<option value="y2">Option Y2</option>
+			</select>
+
+			<div data-do-when='{ "sel-x": ["x1"] } || { "sel-y": ["y1"] }' data-do-action="show">
+				Content X1/Y1
+			</div>
+		</section>
+
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="assets/js/jquery-1.11.3.min.js"><\/script>')</script>
+		<script src="../jquery.dowhen.js"></script>
+
+		<script>
+			$(document).ready(function(){
+				$(document).doWhen();
+			});
+		</script>
+
+
+		<!-- START code example formatter -->
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				$('pre code').each(function(i, el) {
+					hljs.highlightBlock(el);
+				});
+			});
+		</script>
+		<!-- END code example formatter -->
+	</body>
+</html>
