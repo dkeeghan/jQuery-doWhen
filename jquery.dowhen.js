@@ -1,8 +1,9 @@
 /* =============================================================================
-   DO WHEN
+   DO WHEN - A jQuery plugin to do stuff when you want
+   https://github.com/dkeeghan/jQuery-doWhen
    ========================================================================== */
 
-(function ($) {
+(function($) {
 
 	'use strict';
 
@@ -76,10 +77,10 @@
 
 		if (when.indexOf('||')) {
 			var arrWhen = when.split('||');
-			
+
 			for (var i = 0, len = arrWhen.length; i < len; i += 1) {
 				jsonObject = convertToJSON(arrWhen[i]);
-				
+
 				if (jsonObject !== false) {
 					parsed.push(jsonObject);
 				}
@@ -93,9 +94,9 @@
 		}
 
 		for (var j = 0, parsedLen = parsed.length; j < parsedLen; j += 1) {
-			for (var key in parsed[j]) {
-				var parsedItem = parsed[j];
+			var parsedItem = parsed[j];
 
+			for (var key in parsedItem) {
 				if (parsedItem.hasOwnProperty(key)) {
 					// if the data is an empty array it means we can ignore it
 					if (parsedItem[key].length === 0) {
@@ -120,14 +121,15 @@
 	_doesFieldMatch = function(idOrName, value) {
 		var $field = $('#' + idOrName),
 			isMatched = false,
-			fieldValue = [];
+			fieldValue = [],
+			nodeName = ($field.length > 0) ? $field.get(0).nodeName.toUpperCase() : '';
 
 		// find the field based on the id or name and get the value(s)
-		if ($field.length === 0) {
-			$field = $('[name="' + idOrName + '"]');
+		if ($field.length === 0 || (nodeName === 'INPUT' && ($field.attr('type') === 'checkbox' || $field.attr('type') === 'radio'))) {
+			$field = ($field.length > 0) ? $field : $('[name="' + idOrName + '"]');
 
 			if ($field.length === 0) {
-				throw Error('$.doWhen: Invalid action "' + action + '". Valid options are: [' + _getValidActions() + ']');
+				throw Error('$.doWhen: The field "' + idOrName + '" doesn\'t exist.');
 			}
 
 			$field.each(function(i, el) {
