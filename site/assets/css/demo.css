@@ -3,8 +3,9 @@ html {
 }
 
 .page-header {
-	height: 100vh;
+	height: 25vh;
 	background-color: #57afe1;
+	min-height: 300px;
 }
  
 	.page-header .title-container {
@@ -44,5 +45,54 @@ html {
 		font-family: "proxima-nova", sans-serif;
 		font-size: 14px;
 		font-weight: 400;
+		color: #fff;
+	}
+
+.page-body {
+	padding: 40px;
+}
+
+	.page-body section {
+		border-top: 2px solid #ccc;
+		margin-top: 40px;
+		padding-top: 40px;
+	}
+
+	.page-body h3 {
+		border-top: 1px solid #ccc;
+		margin-top: 20px;
+		padding-top: 20px;
+	}
+
+	.page-body h3:first-child {
+		margin-top: 0;
+		border-top: none;
+		padding-top: 0;
+	}
+
+	.page-body h4 {
+		margin: 40px 0 20px 0;
+	}
+
+	.page-body .options {
+		list-style: none;
+		padding: 0;
+	}
+
+		.page-body .options li {
+			margin-top: 10px;
+		}
+
+		.page-body .options li:first-child {
+			margin-top: 0;
+		}
+
+.page-footer {
+	padding: 20px 40px;
+	color: #fff;
+	background-color: #000;
+}
+
+	.page-footer a {
 		color: #fff;
 	}

@@ -42,6 +42,18 @@ At it's most basic level the condition is a JSON object where the key is the `id
 ```
 **Above:** If the field with id `select-box` has the value of `yes` **OR** `no`<br/><br/>
 
+### All/none conditions
+
+```json
+{ "select-box": true }
+```
+**Above:** If the field with id `select-box` has the value of anything apart from `""` (also works if at least one checkbox/radio-button is selected)<br/><br/>
+
+```json
+{ "select-box": false }
+```
+**Above:** If the field with id `select-box` has the value of nothing or `""` (also works if no checkboxes/radio-buttons are selected)<br/><br/>
+
 ### Checking multiple fields
 
 You can also check multiple fields before the condition is successful:
@@ -65,7 +77,7 @@ Included by default are the following actions:
 
 **`click`**<br/>Clicks the element when the conditions are met. Does nothing if not met.
 
-**`disable`**<br/>Disables the element when the conditions are met. Re-enables the element when not met. If the element to be disabled is an `<option>` inside a `<select>` element, it will check and disable the entire `<select>` if there are no other options available to choose.
+**`enable/disable`**<br/>Enables/Disables the element when the conditions are met. Re-enables the element when not met. If the element to be enabled/disabled is an `<option>` inside a `<select>` element, it will check and enable/disable the entire `<select>` if there are no other options available to choose.
 
 You can add your own custom actions by using the `$.doWhen.addAction()` method.
 
