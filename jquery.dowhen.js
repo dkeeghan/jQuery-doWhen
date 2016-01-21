@@ -3,7 +3,7 @@
    https://github.com/dkeeghan/jQuery-doWhen
    ========================================================================== */
 
-(function($) {
+;(function($, window, document, undefined) {
 
 	'use strict';
 
@@ -16,13 +16,14 @@
 		_onStateMatched,
 		_onStateUnmatched,
 		_checkDoState,
-		_checkFieldDoState;
+		_checkFieldDoState,
+		_actionEnableDisable;
 
 	_getValidActions = function() {
 		var validActions = [];
 
-		for (var action in $.fn.doWhen.actions) {
-			if ($.fn.doWhen.actions.hasOwnProperty(action)) {
+		for (var action in $.doWhen.actions) {
+			if ($.doWhen.actions.hasOwnProperty(action)) {
 				validActions.push(action);
 			}
 		}
@@ -35,21 +36,21 @@
 			matchedConfig = false;
 
 		if (action === null) {
-			throw Error('$.doWhen: Action must be specified. Valid options are: [' + _getValidActions() + ']');
+			throw new SyntaxError('$.doWhen: Action must be specified. Valid options are: [' + _getValidActions() + ']');
 		}
 
-		for (var possibleAction in $.fn.doWhen.actions) {
-			if ($.fn.doWhen.actions.hasOwnProperty(possibleAction) && possibleAction === action) {
-				matchedConfig = $.fn.doWhen.actions[possibleAction];
+		for (var possibleAction in $.doWhen.actions) {
+			if ($.doWhen.actions.hasOwnProperty(possibleAction) && possibleAction === action) {
+				matchedConfig = $.doWhen.actions[possibleAction];
 			}
 		}
 
 		if (matchedConfig === false) {
-			throw Error('$.doWhen: Invalid action "' + action + '". Valid options are: [' + _getValidActions() + ']');
+			throw new SyntaxError('$.doWhen: Invalid action "' + action + '". Valid options are: [' + _getValidActions() + ']');
 		}
 
 		// fill out any unfilled options with the defaults
-		$.extend(config, $.fn.doWhen.actions.blank, matchedConfig);
+		$.extend(config, $.doWhen.actions.blank, matchedConfig);
 
 		return config;
 	};
@@ -69,7 +70,7 @@
 			try {
 				json = $.parseJSON(str);
 			} catch (e) {
-				return false;
+				throw new Error('$.doWhen: Invalid JSON \'do-when\' command. Ensure that single quotes are used for the attribute, and double quotes are used inside the JSON string.');
 			}
 
 			return json;
@@ -119,7 +120,7 @@
 	};
 
 	_doesFieldMatch = function(idOrName, value) {
-		var $field = $('#' + idOrName),
+		var $field = $('[id="' + idOrName + '"]'),
 			isMatched = false,
 			fieldValue = [],
 			nodeName = ($field.length > 0) ? $field.get(0).nodeName.toUpperCase() : '';
@@ -129,7 +130,7 @@
 			$field = ($field.length > 0) ? $field : $('[name="' + idOrName + '"]');
 
 			if ($field.length === 0) {
-				throw Error('$.doWhen: The field "' + idOrName + '" doesn\'t exist.');
+				throw new Error('$.doWhen: The field "' + idOrName + '" doesn\'t exist.');
 			}
 
 			$field.each(function(i, el) {
@@ -141,10 +142,22 @@
 			fieldValue.push($field.val());
 		}
 
-		for (var i = 0, len = value.length; i < len; i += 1) {
-			for (var i2 = 0, len2 = fieldValue.length; i2 < len2; i2 += 1) {
-				if (value[i] === fieldValue[i2]) {
-					isMatched = true;
+		if (typeof (value) === 'boolean') {
+			for (var fvI = 0, fvLen = fieldValue.length; fvI < fvLen; fvI += 1) {
+				if (fieldValue[fvI] === '') {
+					fieldValue.splice(fvI, 1);
+				}
+			}
+
+			if ((value === true && fieldValue.length > 0) || (value === false && fieldValue.length === 0)) {
+				isMatched = true;
+			}
+		} else {
+			for (var i = 0, len = value.length; i < len; i += 1) {
+				for (var fvI2 = 0, fvLen2 = fieldValue.length; fvI2 < fvLen2; fvI2 += 1) {
+					if (value[i] === fieldValue[fvI2]) {
+						isMatched = true;
+					}
 				}
 			}
 		}
@@ -228,126 +241,137 @@
 		_checkDoState();
 	};
 
-	$.fn.doWhen = function(options) {
+	_actionEnableDisable = function(enable, $el, callback) {
+		$el.prop('disabled', !enable);
 
-		_options = $.extend({}, $.fn.doWhen.defaults, options);
+		if ($el.get(0).tagName.toLowerCase() === 'option') {
+			var $select = $el.parent(),
+				$enabledOptions = $select.find('option:not(:disabled)');
 
-		_fields = [];
-
-		$(this).find('[data-' + _options.doWhenAttr + ']').each(function(i, el) {
-			// format and save the data
-			_parseAndSaveData(el);
-		});
-
-		for (var key in _fields) {
-			if (_fields.hasOwnProperty(key)) {
-				var $field = $('#' + key),
-					nodeName;
-
-				if ($field.length === 0) {
-					$field = $('[name="' + key + '"]');
+			if (enable) {
+				if ($enabledOptions.length > 1) {
+					$select.prop('disabled', false);
+				}
+			} else {
+				if ($el.prop('selected')) {
+					$enabledOptions.eq(0).prop('selected', true);
 				}
 
-				nodeName = $field.get(0).nodeName.toUpperCase();
-
-				if ((nodeName === 'SELECT' || nodeName === 'INPUT') === false) {
-					$field = $('[name="' + key + '"]');
-				}
-
-				$field.off('change.doWhen', _checkFieldDoState)
-					.on('change.doWhen', _checkFieldDoState);
-			}
-		}
-
-		// check all fields
-		_checkDoState();
-
-		return this;
-
-	};
-
-	$.fn.doWhen.defaults = {
-		doWhenAttr: 'do-when',
-		doActionAttr: 'do-action'
-	};
-
-	$.fn.doWhen.actions = {
-		blank: {
-			match: function($el, callback) {
-				callback();
-			},
-			unmatch: function($el, callback) {
-				callback();
-			}
-		},
-		show: {
-			match: function($el, callback) {
-				$el.show();
-				callback();
-			},
-			unmatch: function($el, callback) {
-				$el.hide();
-				callback();
-			}
-		},
-		hide: {
-			match: function($el, callback) {
-				$el.hide();
-				callback();
-			},
-			unmatch: function($el, callback) {
-				$el.show();
-				callback();
-			}
-		},
-		click: {
-			match: function($el, callback) {
-				$el.get(0).click();
-				callback();
-			},
-			unmatch: function($el, callback) {
-				callback();
-			}
-		},
-		disable: {
-			match: function($el, callback) {
-				$el.prop('disabled', true);
-				callback();
-
-				if ($el.get(0).tagName.toLowerCase() === 'option') {
-					var $select = $el.parent(),
-						$enabledOptions = $select.find('option:not(:disabled)');
-
-					if ($el.prop('selected')) {
-						$enabledOptions.eq(0).prop('selected', true);
-					}
-
-					if ($enabledOptions.length <= 1) {
-						$select.prop('disabled', true);
-					}
-				}
-			},
-			unmatch: function($el, callback) {
-				$el.prop('disabled', false);
-				callback();
-
-				if ($el.get(0).tagName.toLowerCase() === 'option') {
-					var $select = $el.parent(),
-						$enabledOptions = $select.find('option:not(:disabled)');
-
-					if ($enabledOptions.length > 1) {
-						$select.prop('disabled', false);
-					}
+				if ($enabledOptions.length <= 1) {
+					$select.prop('disabled', true);
 				}
 			}
 		}
+
+		callback();
 	};
 
-	$.fn.doWhen.addAction = function(name, match, unmatch) {
-		$.fn.doWhen.actions[name] = {
-			match: match,
-			unmatch: unmatch
-		};
-	};
+	$.extend({
+		doWhen: {
+			defaults: {
+				doWhenAttr: 'do-when',
+				doActionAttr: 'do-action'
+			},
 
-}(jQuery));
+			actions: {
+				blank: {
+					match: function($el, callback) {
+						callback();
+					},
+					unmatch: function($el, callback) {
+						callback();
+					}
+				},
+				show: {
+					match: function($el, callback) {
+						$el.show();
+						callback();
+					},
+					unmatch: function($el, callback) {
+						$el.hide();
+						callback();
+					}
+				},
+				hide: {
+					match: function($el, callback) {
+						$el.hide();
+						callback();
+					},
+					unmatch: function($el, callback) {
+						$el.show();
+						callback();
+					}
+				},
+				click: {
+					match: function($el, callback) {
+						$el.get(0).click();
+						callback();
+					},
+					unmatch: function($el, callback) {
+						callback();
+					}
+				},
+				enable: {
+					match: function($el, callback) {
+						_actionEnableDisable(true, $el, callback);
+					},
+					unmatch: function($el, callback) {
+						_actionEnableDisable(false, $el, callback);
+					}
+				},
+				disable: {
+					match: function($el, callback) {
+						_actionEnableDisable(false, $el, callback);
+					},
+					unmatch: function($el, callback) {
+						_actionEnableDisable(true, $el, callback);
+					}
+				}
+			},
+
+			addAction: function(name, match, unmatch) {
+				$.doWhen.actions[name] = {
+					match: match,
+					unmatch: unmatch
+				};
+			}
+		}
+	}).fn.extend({
+		doWhen: function(options) {
+			_options = $.extend(true, {}, $.doWhen.defaults, options);
+
+			_fields = [];
+
+			$(this).find('[data-' + _options.doWhenAttr + ']').each(function(i, el) {
+				// format and save the data
+				_parseAndSaveData(el);
+			});
+
+			for (var key in _fields) {
+				if (_fields.hasOwnProperty(key)) {
+					var $field = $('[id="' + key + '"]'),
+						nodeName;
+
+					if ($field.length === 0) {
+						$field = $('[name="' + key + '"]');
+					}
+
+					nodeName = $field.get(0).nodeName.toUpperCase();
+
+					if ((nodeName === 'SELECT' || nodeName === 'INPUT') === false) {
+						$field = $('[name="' + key + '"]');
+					}
+
+					$field.off('change.doWhen', _checkFieldDoState)
+						.on('change.doWhen', _checkFieldDoState);
+				}
+			}
+
+			// check all fields
+			_checkDoState();
+
+			return this;
+		}
+	});
+
+})(jQuery, window, document);
